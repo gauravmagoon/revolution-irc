@@ -276,6 +276,7 @@ public class ChatFragment extends Fragment implements
             if (chanMgr != null)
                 chanMgr.cancelNotification(getActivity());
         }
+
     }
 
     public String getAndClearMessageJump(String channel) {

@@ -1,5 +1,6 @@
 package io.mrarm.irc;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -7,6 +8,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.provider.OpenableColumns;
 import androidx.annotation.NonNull;
@@ -31,20 +33,32 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.Toast;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.Future;
 
 import io.mrarm.chatlib.ChatApi;
+import io.mrarm.chatlib.dto.MessageId;
+import io.mrarm.chatlib.dto.MessageInfo;
+import io.mrarm.chatlib.dto.MessageList;
+import io.mrarm.chatlib.dto.MessageListAfterIdentifier;
 import io.mrarm.chatlib.dto.NickWithPrefix;
 import io.mrarm.chatlib.irc.ServerConnectionApi;
 import io.mrarm.chatlib.irc.dcc.DCCServer;
 import io.mrarm.chatlib.irc.dcc.DCCUtils;
+import io.mrarm.chatlib.message.MessageListener;
+import io.mrarm.chatlib.message.MessageStorageApi;
 import io.mrarm.irc.chat.ChannelInfoAdapter;
 import io.mrarm.irc.chat.ChatFragment;
 import io.mrarm.irc.config.AppSettings;
@@ -56,6 +70,7 @@ import io.mrarm.irc.util.StyledAttributesHelper;
 import io.mrarm.irc.util.WarningHelper;
 import io.mrarm.irc.view.ChipsEditText;
 import io.mrarm.irc.view.LockableDrawerLayout;
+
 
 public class MainActivity extends ThemedActivity implements IRCApplication.ExitCallback {
 
@@ -80,6 +95,7 @@ public class MainActivity extends ThemedActivity implements IRCApplication.ExitC
     private DCCManager.ActivityDialogHandler mDCCDialogHandler =
             new DCCManager.ActivityDialogHandler(this, REQUEST_CODE_DCC_FOLDER_PERMISSION,
                     REQUEST_CODE_DCC_STORAGE_PERMISSION);
+
 
     public static Intent getLaunchIntent(Context context, ServerConnectionInfo server, String channel, String messageId) {
         Intent intent = new Intent(context, MainActivity.class);
@@ -450,6 +466,7 @@ public class MainActivity extends ThemedActivity implements IRCApplication.ExitC
         return super.onPrepareOptionsMenu(menu) | hasChanges;
     }
 
+    @SuppressLint("ResourceType")
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -517,7 +534,76 @@ public class MainActivity extends ThemedActivity implements IRCApplication.ExitC
             startActivity(new Intent(this, SettingsActivity.class));
         } else if (id == R.id.action_exit) {
             ((IRCApplication) getApplication()).requestExit();
-        } else {
+        }
+
+        //roboirc
+        // Need to write code here that saves content of the current window into a local file name
+        // through a dialog box
+        else if( id == R.id.action_save_buffer)
+        {
+
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+            alertDialog.setTitle("Destination File Name");
+            alertDialog.setMessage("Enter Destination File Name (before .txt)");
+
+            final EditText input = new EditText(this);
+            alertDialog.setView(input);
+
+            String filename;
+            alertDialog.setPositiveButton("YES",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            final String filename = input.getText().toString();
+
+                            //LayoutInflater inflater = (LayoutInflater)  getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                            //View chat_messages_fragment = inflater.inflate(R.layout.chat_messages_fragment, null);
+                            //RecyclerView mRecyclerView = chat_messages_fragment.findViewById(R.id.messages);
+
+                            File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+
+                            //((ChatFragment)getCurrentFragment()).getCurrentChannel()
+                            File file = new File(path, input.getText() + ".txt");
+
+                            try {
+                                file.createNewFile();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                            try {
+                                FileOutputStream fileOutputStream = new FileOutputStream(file);
+                                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream);
+
+                                // Need to add the code for appending channel messages
+                                outputStreamWriter.append(((ChatFragment)getCurrentFragment()).getCurrentChannel());
+
+                                //(messageStorageApi.getMessages(((ChatFragment)getCurrentFragment()).getCurrentChannel(), 100, null, null, null, null))
+
+                                outputStreamWriter.close();
+
+                            } catch (FileNotFoundException e) {
+                                e.printStackTrace();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                    });
+
+                    //((ChatFragment)getCurrentFragment())
+
+                            alertDialog.setNegativeButton("NO",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.cancel();
+                                        }
+                                    });
+
+                            alertDialog.show();
+
+        }
+        else
+        {
             return super.onOptionsItemSelected(item);
         }
         return true;

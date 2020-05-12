@@ -296,20 +296,47 @@ public class ChatMessagesFragment extends Fragment implements StatusMessageListe
             }
         });
 
-        mUnreadCtr.setOnClickListener((v) -> {
+        //roboirc
+
+        // Automatically scroll to the end by default
+
+        if(mAdapter!=null) {
+            ((LinearLayoutManager) mRecyclerView.getLayoutManager()).scrollToPosition(mAdapter.getItemCount() - 1);
+        }
+
+
+
+        /* mUnreadCtr.setOnClickListener((v) -> {
+
+        if(mAdapter!=null) {
+
             ChannelNotificationManager mgr = mConnection.getNotificationManager().getChannelManager(mChannelName, true);
+
             MessageId msgId = mgr.getFirstUnreadMessage();
+
             int index = mAdapter.findMessageWithId(msgId);
+
             if (index != -1)
                 ((LinearLayoutManager) mRecyclerView.getLayoutManager()).scrollToPositionWithOffset(index, 0);
             else
                 reloadMessages(msgId);
+
             mgr.clearUnreadMessages();
+
+        }
+
         });
+        */
+
+
+        // Close button on New Messages Notification in channel
+        /*
         mUnreadDiscard.setOnClickListener((v) -> {
+
             ChannelNotificationManager mgr = mConnection.getNotificationManager().getChannelManager(mChannelName, true);
             mgr.clearUnreadMessages();
         });
+         */
 
         if (mAdapter != null) {
             mRecyclerView.setAdapter(mAdapter);
@@ -432,8 +459,10 @@ public class ChatMessagesFragment extends Fragment implements StatusMessageListe
                 mUnreadCheckedFirst = -1;
                 mUnreadCheckedLast = -1;
             }
-            mUnreadCtr.setVisibility(View.VISIBLE);
-            mUnreadText.setText(getResources().getQuantityString(R.plurals.unread_message_counter, unread, unread));
+
+            //roboirc
+            //mUnreadCtr.setVisibility(View.VISIBLE);
+            //mUnreadText.setText(getResources().getQuantityString(R.plurals.unread_message_counter, unread, unread));
         }
     }
 

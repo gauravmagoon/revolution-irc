@@ -63,6 +63,7 @@
 
     <string name="message_new_messages">New messages</string>
 
+    <!-- roboirc -->
     <plurals name="unread_message_counter">
         <item quantity="one">1 unread message</item>
         <item quantity="other">%d unread messages</item>
@@ -89,6 +90,10 @@
     <string name="action_open">Open</string>
     <string name="action_back">Back</string>
     <string name="action_close">Close</string>
+
+    <!-- roboirc -->
+    <string name="action_save_buffer">Export Window Buffer To File</string>
+
     <string name="action_disconnect_and_close">Disconnect and close</string>
     <string name="action_servers">Manage servers</string>
     <string name="action_add_below">Add below</string>

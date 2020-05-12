@@ -4,8 +4,10 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/buildSrc/build.iml" filepath="$PROJECT_DIR$/app/buildSrc/build.iml" />
-      <module fileurl="file://$PROJECT_DIR$/irc.iml" filepath="$PROJECT_DIR$/irc.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/buildSrc/buildSrc-build.iml" filepath="$PROJECT_DIR$/app/buildSrc/buildSrc-build.iml" group="build" />
       <module fileurl="file://$PROJECT_DIR$/revolution-irc.iml" filepath="$PROJECT_DIR$/revolution-irc.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/revolution-irc-app.iml" filepath="$PROJECT_DIR$/app/revolution-irc-app.iml" group="revolution-irc/app" />
+      <module fileurl="file://$PROJECT_DIR$/roboirc-revolution-irc.iml" filepath="$PROJECT_DIR$/roboirc-revolution-irc.iml" group="revolution-irc" />
     </modules>
   </component>
 </project>
