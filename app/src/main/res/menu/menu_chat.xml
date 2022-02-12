@@ -3,11 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="io.mrarm.irc.MainActivity">
 
-
-    <!-- roboirc -->
     <item
         android:id="@+id/action_save_buffer"
         android:title="@string/action_save_buffer"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_show_nicklist"
+        android:title="@string/action_show_nicklist"
         app:showAsAction="never" />
 
     <item

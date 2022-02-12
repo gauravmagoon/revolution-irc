@@ -92,7 +92,7 @@
     <string name="action_close">Close</string>
 
     <!-- roboirc -->
-    <string name="action_save_buffer">Export Window Buffer To File</string>
+    <string name="action_save_buffer">Save Buffer</string>
 
     <string name="action_disconnect_and_close">Disconnect and close</string>
     <string name="action_servers">Manage servers</string>
@@ -110,6 +110,9 @@
     <string name="action_sort_none">Do not sort</string>
     <string name="action_sort_name">Sort by name</string>
     <string name="action_join_channel">Join channel</string>
+
+    <string name="action_show_nicklist">Show nicklist</string>
+
     <string name="action_message_user">Message user</string>
     <string name="action_part_channel">Leave channel</string>
     <string name="action_close_direct">Close conversation</string>
@@ -314,8 +317,12 @@
     <string name="pref_value_default_part_message">Leaving</string>
 
     <!-- Interface settings -->
-
     <string name="pref_header_interface">Interface</string>
+
+    <!-- roboirc -->
+    <string name="pref_title_auto_scroll_to_new_messages">Auto-scroll to new messages</string>
+    <string name="pref_summary_auto_scroll_to_new_messages">Hide all join and leave (part/quit) messages.</string>
+    <!-- roboirc -->
 
     <string name="pref_header_chat">Chat</string>
     <string name="pref_title_font">Font</string>

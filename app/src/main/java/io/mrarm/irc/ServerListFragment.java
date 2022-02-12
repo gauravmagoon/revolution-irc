@@ -71,6 +71,14 @@ public class ServerListFragment extends Fragment {
                 ServerConnectionManager.getInstance(getContext()).removeConnection(info);
                 return true;
             });
+
+            //roboirc
+            menu.addItem(R.string.action_reconnect, R.drawable.ic_keyboard, (MenuBottomSheetDialog.Item item) -> {
+                info.disconnect();
+                info.connect();
+                return true;
+            });
+
             menu.show();
             ((MainActivity) getActivity()).setFragmentDialog(menu);
         });
@@ -102,6 +110,13 @@ public class ServerListFragment extends Fragment {
                 ((MainActivity) getActivity()).setFragmentDialog(builder2.show());
                 return true;
             });
+
+            //roboirc
+            menu.addItem(R.string.action_reconnect, R.drawable.ic_keyboard, (MenuBottomSheetDialog.Item item) -> {
+                ServerConnectionManager.getInstance(getContext()).tryCreateConnection(data, getActivity());
+                return true;
+            });
+
             menu.show();
             ((MainActivity) getActivity()).setFragmentDialog(menu);
         });

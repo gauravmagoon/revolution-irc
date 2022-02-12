@@ -105,6 +105,7 @@ public class ChannelNotificationManager implements NotificationCountStorage.OnCh
                         mFirstUnreadMessage.toString());
             }
         }
+
     }
 
     public int getUnreadMessageCount() {

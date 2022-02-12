@@ -1,2 +1,5 @@
+include ':recyclerviewfastscroller'
+include ':sample'
 includeBuild 'app/buildSrc'
 include ':app'
+//include ':libs:recyclerviewfastscroller'

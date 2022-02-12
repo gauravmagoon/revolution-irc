@@ -94,6 +94,7 @@ public class InterfaceSettingsFragment extends SettingsListFragment
                 .linkSetting(prefs, ChatSettings.PREF_FONT));
         a.add(new FontSizeSetting(getString(R.string.pref_title_font_size))
                 .linkSetting(prefs, ChatSettings.PREF_FONT_SIZE));
+
         a.add(new CheckBoxSetting(getString(R.string.pref_title_hide_join_part),
                 getString(R.string.pref_summary_hide_join_part))
                 .linkSetting(prefs, ChatSettings.PREF_HIDE_JOIN_PART_MESSAGES));

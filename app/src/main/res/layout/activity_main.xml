@@ -50,6 +50,7 @@
         android:layout_gravity="end"
         android:fitsSystemWindows="true">
 
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/members_list"
             android:layout_width="match_parent"

@@ -4,6 +4,9 @@ import android.app.NotificationChannelGroup;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.os.Build;
+import android.view.LayoutInflater;
+import android.view.View;
+
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
@@ -13,11 +16,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Pattern;
+import java.util.zip.Inflater;
 
 import io.mrarm.chatlib.ChatApi;
 import io.mrarm.chatlib.dto.MessageId;
 import io.mrarm.chatlib.dto.MessageInfo;
 import io.mrarm.chatlib.irc.ServerConnectionApi;
+import io.mrarm.irc.chat.ChatMessagesAdapter;
+import io.mrarm.irc.chat.ChatMessagesFragment;
 import io.mrarm.irc.config.NotificationRule;
 import io.mrarm.irc.config.NotificationRuleManager;
 import io.mrarm.irc.util.WarningHelper;
@@ -44,10 +50,14 @@ public class NotificationManager {
     public void processMessage(Context context, ServerConnectionInfo connection, String channel,
                                MessageInfo info, MessageId messageId) {
         ChannelNotificationManager channelManager = connection.getNotificationManager().getChannelManager(channel, true);
+
+        //roboirc
         if (info.getType() == MessageInfo.MessageType.NORMAL ||
                 info.getType() == MessageInfo.MessageType.ME ||
                 info.getType() == MessageInfo.MessageType.NOTICE)
+        {
             channelManager.addUnreadMessage(messageId);
+        }
 
         if (info.getMessage() == null || info.getSender() == null ||
                 info.getSender().getNick().equals(connection.getUserNick()))

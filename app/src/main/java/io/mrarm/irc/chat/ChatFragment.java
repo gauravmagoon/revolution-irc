@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Date;
 import java.util.List;
@@ -183,7 +184,30 @@ public class ChatFragment extends Fragment implements
             ImageViewCompat.setImageTintList(tab.getCustomView().findViewById(R.id.notification_icon), mTabLayout.getTabTextColors());
             updateTabLayoutTab(tab);
             mTabLayout.addTab(tab, false);
+
+
         }
+
+        //roboirc
+        mTabLayout.getChildCount();
+        for(int j=0; j<mTabLayout.getChildCount(); j++)
+        {
+            int finalJ = j;
+            mTabLayout.getChildAt(j).setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getActivity(), mTabLayout.getChildAt(finalJ).getTag().toString(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                    return true;
+                }
+            });
+        }
+        //
 
         final int currentItem = mViewPager.getCurrentItem();
         if (currentItem != mTabLayout.getSelectedTabPosition() && currentItem < mTabLayout.getTabCount())

@@ -1,11 +1,12 @@
 apply plugin: 'com.android.application'
+//apply plugin: 'kotlin-android'
 apply plugin: 'io.mrarm.irc.build.settings-builder'
 
 android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "io.mrarm.irc"
-        minSdkVersion 17
+        minSdkVersion 19
         targetSdkVersion 28
         versionCode 10
         versionName "0.5.2"
@@ -14,6 +15,10 @@ android {
             useSupportLibrary true
         }
         vectorDrawables.useSupportLibrary = true
+
+        //roboirc
+        multiDexEnabled true
+
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -25,6 +30,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
 }
 
 dependencies {
@@ -32,6 +38,7 @@ dependencies {
     androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0-alpha4', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+
     implementation 'androidx.vectordrawable:vectordrawable:1.0.1'
     implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'androidx.cardview:cardview:1.0.0'
@@ -48,4 +55,16 @@ dependencies {
     implementation 'com.github.mcmrarm:arscwriter:master-SNAPSHOT'
     implementation 'com.github.mcmrarm:thememonkey:master-SNAPSHOT'
     testImplementation 'junit:junit:4.12'
+
+    //roboirc
+    implementation 'com.quiph.ui:recyclerviewfastscroller:0.2.1'
+    //implementation project(':libs:recyclerviewfastscroller')
+    implementation "androidx.dynamicanimation:dynamicanimation:1.0.0"
+    implementation "androidx.core:core-ktx:+"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+
+}
+repositories {
+    mavenCentral()
 }

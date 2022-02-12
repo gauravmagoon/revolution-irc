@@ -3,6 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/action_save_buffer"
+        android:icon="@drawable/ic_save"
+        android:title="@string/action_copy"
+        app:showAsAction="always" />
+
+    <item
         android:id="@+id/action_copy"
         android:icon="@drawable/ic_copy_white"
         android:title="@string/action_copy"

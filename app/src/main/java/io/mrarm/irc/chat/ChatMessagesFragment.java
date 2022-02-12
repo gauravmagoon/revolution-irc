@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import androidx.appcompat.view.ActionMode;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,8 +23,15 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -59,9 +68,13 @@ import io.mrarm.irc.util.LongPressSelectTouchListener;
 import io.mrarm.irc.util.ScrollPosLinearLayoutManager;
 import io.mrarm.irc.config.SettingsHelper;
 
-
 public class ChatMessagesFragment extends Fragment implements StatusMessageListener,
         MessageListener, ChannelInfoListener, NotificationManager.UnreadMessageCountCallback {
+
+    //roboirc
+    OutputStreamWriter outputStreamWriter;
+    FileOutputStream fileOutputStream;
+    File path, file;
 
     private static final String TAG = "ChatMessagesFragment";
 
@@ -247,16 +260,45 @@ public class ChatMessagesFragment extends Fragment implements StatusMessageListe
             mUnreadCtr = rootView.findViewById(R.id.unread_counter_ctr);
             mUnreadText = rootView.findViewById(R.id.unread_counter);
             mUnreadDiscard = rootView.findViewById(R.id.unread_counter_discard);
+
         }
         mLayoutManager = new ScrollPosLinearLayoutManager(getContext());
         mLayoutManager.setStackFromEnd(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
+        //roboirc
+        mRecyclerView.setOnFlingListener(new RecyclerView.OnFlingListener() {
+            @Override
+            public boolean onFling(int velocityX, int velocityY) {
+
+                //Toast.makeText(getContext(), "velocityY: " + velocityY, Toast.LENGTH_SHORT).show();
+
+                //roboirc
+
+                // up
+                if(velocityY<-10000)
+                {
+                    ((LinearLayoutManager) mRecyclerView.getLayoutManager()).scrollToPosition(0);
+                }
+
+                // down
+                else if(velocityY>10000)
+                {
+                    if(mAdapter!=null)
+                        ((LinearLayoutManager) mRecyclerView.getLayoutManager()).scrollToPosition(mAdapter.getItemCount()-1);
+                }
+
+                return true;
+            }
+        });
+
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+
                 if (mAdapter == null)
                     return;
+
                 checkForUnreadMessages();
                 int firstVisible = mLayoutManager.findFirstVisibleItemPosition();
                 if (firstVisible >= 0 && firstVisible < LOAD_MORE_BEFORE_INDEX) {
@@ -290,23 +332,16 @@ public class ChatMessagesFragment extends Fragment implements StatusMessageListe
                                             messages.getMessageIds());
                                     mLoadNewerIdentifier = messages.getNewer();
                                     mIsLoadingMore = false;
+
                                 });
                             }, null);
                 }
+
             }
         });
 
         //roboirc
-
-        // Automatically scroll to the end by default
-
-        if(mAdapter!=null) {
-            ((LinearLayoutManager) mRecyclerView.getLayoutManager()).scrollToPosition(mAdapter.getItemCount() - 1);
-        }
-
-
-
-        /* mUnreadCtr.setOnClickListener((v) -> {
+        mUnreadCtr.setOnClickListener((v) -> {
 
         if(mAdapter!=null) {
 
@@ -326,17 +361,20 @@ public class ChatMessagesFragment extends Fragment implements StatusMessageListe
         }
 
         });
-        */
 
 
         // Close button on New Messages Notification in channel
-        /*
         mUnreadDiscard.setOnClickListener((v) -> {
 
             ChannelNotificationManager mgr = mConnection.getNotificationManager().getChannelManager(mChannelName, true);
             mgr.clearUnreadMessages();
+
+            //roboirc
+            ((LinearLayoutManager) mRecyclerView.getLayoutManager()).scrollToPosition(mAdapter.getItemCount()-1);
+
         });
-         */
+
+        //roboirc
 
         if (mAdapter != null) {
             mRecyclerView.setAdapter(mAdapter);
@@ -461,8 +499,8 @@ public class ChatMessagesFragment extends Fragment implements StatusMessageListe
             }
 
             //roboirc
-            //mUnreadCtr.setVisibility(View.VISIBLE);
-            //mUnreadText.setText(getResources().getQuantityString(R.plurals.unread_message_counter, unread, unread));
+            mUnreadCtr.setVisibility(View.VISIBLE);
+            mUnreadText.setText(getResources().getQuantityString(R.plurals.unread_message_counter, unread, unread));
         }
     }
 
@@ -622,8 +660,17 @@ public class ChatMessagesFragment extends Fragment implements StatusMessageListe
             if (!getUserVisibleHint() && mAdapter.getNewMessagesStart() == null)
                 mAdapter.setNewMessagesStart(messageId);
             mAdapter.appendMessage(messageInfo, messageId);
-            if (mRecyclerView != null)
-                scrollToBottom();
+
+            //roboirc
+            // automatically scrolls to the end when new item is added
+            if(mRecyclerView!=null)
+            {
+                mRecyclerView.smoothScrollToPosition(mAdapter.getItemCount() - 1);
+            }
+
+            //roboirc
+            //if (mRecyclerView != null)
+            //    scrollToBottom();
         });
     }
 
@@ -632,8 +679,17 @@ public class ChatMessagesFragment extends Fragment implements StatusMessageListe
         updateMessageList(() -> {
             mStatusMessages.add(statusMessageInfo);
             mStatusAdapter.notifyItemInserted(mStatusMessages.size() - 1);
-            if (mRecyclerView != null)
-                scrollToBottom();
+
+            //roboirc
+            // automatically scrolls to the end when new item is added
+            if(mRecyclerView!=null)
+            {
+                mRecyclerView.smoothScrollToPosition(mStatusAdapter.getItemCount() - 1);
+            }
+
+            //roboirc
+            //if (mRecyclerView != null)
+            //    scrollToBottom();
         });
     }
 
@@ -709,7 +765,6 @@ public class ChatMessagesFragment extends Fragment implements StatusMessageListe
                 null, null);
     }
 
-
     private MessagesActionModeCallback mMessagesActionModeCallback;
 
     private class MessagesActionModeCallback implements ActionMode.Callback {
@@ -730,9 +785,18 @@ public class ChatMessagesFragment extends Fragment implements StatusMessageListe
             return false;
         }
 
+        //roboirc
+        // This is the section of code that deals with message selection in any window
+
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             switch (item.getItemId()) {
+
+                case R.id.action_save_buffer:
+                    saveAllMessages();
+                    mode.finish();
+                    return true;
+
                 case R.id.action_copy:
                     copySelectedMessages();
                     mode.finish();
@@ -767,5 +831,108 @@ public class ChatMessagesFragment extends Fragment implements StatusMessageListe
         }
 
     };
+
+
+    //roboirc
+    public void saveAllMessages() {
+
+        path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+
+        //((ChatFragment)getCurrentFragment()).getCurrentChannel()
+        file = new File(path, mChannelName.toString() + ".txt");
+
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+
+            /*
+            Process p = Runtime.getRuntime().exec("attrib -H" + path + mChannelName.toString() + ".txt");
+            p.waitFor();
+
+             */
+
+            fileOutputStream = new FileOutputStream(file);
+            outputStreamWriter = new OutputStreamWriter(fileOutputStream);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        /*
+        catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+         */
+
+        ResponseCallback<MessageList> callback = (MessageList messages) -> {
+
+            try {
+                outputStreamWriter.append("Got message list for " + mChannelName + ": " +
+                        messages.getMessages().size() + " messages");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            List<MessageInfo> temp = messages.getMessages();
+
+            for (int i = 0; i<temp.size(); i++)
+            {
+                try {
+                    outputStreamWriter.append("\n" + i + ": " + temp.get(i).getDate() + " : "  + temp.get(i).getSender() + " : "+ temp.get(i).getType() + " : " + temp.get(i).getMessage());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+            try {
+
+                outputStreamWriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Log.i(TAG,  mChannelName.toString() + " saved to " + file.getAbsolutePath());
+            //(messageStorageApi.getMessages(((ChatFragment)getCurrentFragment()).getCurrentChannel(), 100, null, null, null, null))
+
+        };
+
+        Log.i(TAG, "mAdapter.getItemCount() for " + mChannelName + " is " + mAdapter.getItemCount());
+
+        EditText editText = new EditText(getContext());
+        android.app.AlertDialog alertDialog = new android.app.AlertDialog.Builder(getContext()).create();
+        alertDialog.setTitle("How many messages to save?");
+        alertDialog.setCancelable(false);
+        alertDialog.setMessage("Enter how many messages to save to file");
+
+
+        alertDialog.setButton(android.app.AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                if(editText.getText()!=null) {
+                    mConnection.getApiInstance().getMessageStorageApi().getMessages(mChannelName, Integer.valueOf(editText.getText().toString()),
+                            getFilterOptions(), null, callback, null);
+                }
+            }
+        });
+
+
+        alertDialog.setButton(android.app.AlertDialog.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                alertDialog.dismiss();
+            }
+        });
+
+
+        alertDialog.setView(editText);
+        alertDialog.show();
+
+
+    }
+
 
 }

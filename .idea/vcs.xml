@@ -2,5 +2,8 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/RecyclerView-FastScroller" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/app/src/main/java/quiph" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/quiph" vcs="Git" />
   </component>
 </project>

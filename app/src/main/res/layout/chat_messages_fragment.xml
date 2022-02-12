@@ -5,13 +5,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <com.qtalk.recyclerviewfastscroller.RecyclerViewFastScroller
+        android:layout_width="match_parent"
+        android:id="@+id/fastscroller"
+        app:handleHeight="1dp"
+        app:handleWidth="1dp"
+        android:layout_height="match_parent">
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/messages"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingTop="4dp"
+
+        style="@style/recyclerview_scrollbar_style"
+
         android:paddingBottom="4dp"
         android:clipToPadding="false" />
+
+    </com.qtalk.recyclerviewfastscroller.RecyclerViewFastScroller>
 
     <LinearLayout
         android:id="@+id/unread_counter_ctr"

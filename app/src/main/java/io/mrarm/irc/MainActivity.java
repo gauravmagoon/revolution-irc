@@ -15,6 +15,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.tabs.TabLayout;
+
+import androidx.dynamicanimation.animation.DynamicAnimation;
+import androidx.dynamicanimation.animation.SpringAnimation;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.core.view.GravityCompat;
@@ -26,6 +29,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -42,6 +46,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -49,6 +54,8 @@ import java.util.UUID;
 import java.util.concurrent.Future;
 
 import io.mrarm.chatlib.ChatApi;
+import io.mrarm.chatlib.ResponseCallback;
+import io.mrarm.chatlib.dto.MessageFilterOptions;
 import io.mrarm.chatlib.dto.MessageId;
 import io.mrarm.chatlib.dto.MessageInfo;
 import io.mrarm.chatlib.dto.MessageList;
@@ -61,6 +68,8 @@ import io.mrarm.chatlib.message.MessageListener;
 import io.mrarm.chatlib.message.MessageStorageApi;
 import io.mrarm.irc.chat.ChannelInfoAdapter;
 import io.mrarm.irc.chat.ChatFragment;
+import io.mrarm.irc.chat.ChatMessagesAdapter;
+import io.mrarm.irc.chat.ChatMessagesFragment;
 import io.mrarm.irc.config.AppSettings;
 import io.mrarm.irc.config.ChatSettings;
 import io.mrarm.irc.dialog.UserSearchDialog;
@@ -152,6 +161,8 @@ public class MainActivity extends ThemedActivity implements IRCApplication.ExitC
         if (AppSettings.isDrawerPinned())
             mDrawerLayout.setLocked(true);
 
+        // roboirc
+        // This is where the right nicklist is set
         mChannelInfoAdapter = new ChannelInfoAdapter();
         RecyclerView membersRecyclerView = findViewById(R.id.members_list);
         membersRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -462,6 +473,7 @@ public class MainActivity extends ThemedActivity implements IRCApplication.ExitC
                 menu.findItem(R.id.action_dcc_send).setVisible(dccSendVisible);
                 hasChanges = true;
             }
+
         }
         return super.onPrepareOptionsMenu(menu) | hasChanges;
     }
@@ -537,71 +549,16 @@ public class MainActivity extends ThemedActivity implements IRCApplication.ExitC
         }
 
         //roboirc
-        // Need to write code here that saves content of the current window into a local file name
-        // through a dialog box
-        else if( id == R.id.action_save_buffer)
-        {
+        else if (id == R.id.action_show_nicklist) {
 
-            AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
-            alertDialog.setTitle("Destination File Name");
-            alertDialog.setMessage("Enter Destination File Name (before .txt)");
-
-            final EditText input = new EditText(this);
-            alertDialog.setView(input);
-
-            String filename;
-            alertDialog.setPositiveButton("YES",
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            final String filename = input.getText().toString();
-
-                            //LayoutInflater inflater = (LayoutInflater)  getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                            //View chat_messages_fragment = inflater.inflate(R.layout.chat_messages_fragment, null);
-                            //RecyclerView mRecyclerView = chat_messages_fragment.findViewById(R.id.messages);
-
-                            File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-
-                            //((ChatFragment)getCurrentFragment()).getCurrentChannel()
-                            File file = new File(path, input.getText() + ".txt");
-
-                            try {
-                                file.createNewFile();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-
-                            try {
-                                FileOutputStream fileOutputStream = new FileOutputStream(file);
-                                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream);
-
-                                // Need to add the code for appending channel messages
-                                outputStreamWriter.append(((ChatFragment)getCurrentFragment()).getCurrentChannel());
-
-                                //(messageStorageApi.getMessages(((ChatFragment)getCurrentFragment()).getCurrentChannel(), 100, null, null, null, null))
-
-                                outputStreamWriter.close();
-
-                            } catch (FileNotFoundException e) {
-                                e.printStackTrace();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-
-                        }
-                    });
-
-                    //((ChatFragment)getCurrentFragment())
-
-                            alertDialog.setNegativeButton("NO",
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            dialog.cancel();
-                                        }
-                                    });
-
-                            alertDialog.show();
+            mDrawerLayout.openDrawer(GravityCompat.END);
 
         }
+        else if (id == R.id.action_save_buffer) {
+
+        }
+
+
         else
         {
             return super.onOptionsItemSelected(item);

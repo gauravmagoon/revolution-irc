@@ -26,7 +26,11 @@ import io.mrarm.irc.util.AlignToPointSpan;
 import io.mrarm.irc.util.IRCColorUtils;
 import io.mrarm.irc.util.MessageBuilder;
 
-public class ServerStatusMessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+import com.qtalk.recyclerviewfastscroller.RecyclerViewFastScroller;
+
+import org.jetbrains.annotations.NotNull;
+
+public class ServerStatusMessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements  RecyclerViewFastScroller.OnPopupTextUpdate{
 
     private static final int TYPE_MESSAGE = 0;
     private static final int TYPE_EXPANDABLE_MESSAGE = 1;
@@ -187,6 +191,13 @@ public class ServerStatusMessagesAdapter extends RecyclerView.Adapter<RecyclerVi
                     message.getMessage()));
         }
 
+    }
+
+    //roboirc
+    @NotNull
+    public CharSequence onChange(int i) {
+
+        return "N/A";
     }
 
 }

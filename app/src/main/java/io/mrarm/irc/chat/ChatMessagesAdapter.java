@@ -16,12 +16,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.qtalk.recyclerviewfastscroller.RecyclerViewFastScroller;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.TreeSet;
 
 import io.mrarm.chatlib.dto.MessageId;
@@ -34,7 +40,7 @@ import io.mrarm.irc.util.MessageBuilder;
 import io.mrarm.irc.util.StyledAttributesHelper;
 
 public class ChatMessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
-        implements LongPressSelectTouchListener.Listener, ChatSelectTouchListener.AdapterInterface {
+        implements LongPressSelectTouchListener.Listener, ChatSelectTouchListener.AdapterInterface, RecyclerViewFastScroller.OnPopupTextUpdate {
 
     private static final int TYPE_MESSAGE = 0;
     private static final int TYPE_DAY_MARKER = 1;
@@ -340,6 +346,29 @@ public class ChatMessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         BaseHolder holder = (BaseHolder) recyclerView.findViewHolderForItemId(itemId);
         if (holder != null)
             holder.setSelected(highlight || mSelectedItems.contains(itemId), false);
+    }
+
+    //roboirc
+    @NotNull
+    public CharSequence onChange(int i) {
+
+        try {
+            if(((MessageItem) getMessage(i))!=null)
+            {
+                if (((MessageItem) getMessage(i)).mMessage.getDate() != null) {
+                    String data = ((MessageItem) getMessage(i)).mMessage.getDate().toString();
+                    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+                    Date dateobj = sdf.parse((data.split(" ")[3]));
+                    return (i + " , " + data.split(" ")[0] + " , " + data.split(" ")[1] + " , " + data.split(" ")[2] + " , " + new SimpleDateFormat("hh:mm:ss aa").format(dateobj) + " , " + data.split(" ")[4]);
+                }
+            }
+        }
+        catch(Exception e)
+        {
+
+        }
+
+        return "N/A";
     }
 
     private abstract class BaseHolder extends RecyclerView.ViewHolder {

@@ -36,7 +36,7 @@ public class ChannelInfoAdapter extends RecyclerView.Adapter {
     private String mTopic;
     private String mTopicSetBy;
     private Date mTopicSetOn;
-    private List<NickWithPrefix> mMembers;
+    private static List<NickWithPrefix> mMembers;
 
     public ChannelInfoAdapter() {
     }
@@ -127,6 +127,9 @@ public class ChannelInfoAdapter extends RecyclerView.Adapter {
         private TextView topicInfoTextView;
         private int textColorSecondary;
 
+        //roboirc
+        private TextView numberOfMembers;
+
         public TopicHolder(View view) {
             super(view);
             topicTextView = view.findViewById(R.id.topic);
@@ -135,6 +138,8 @@ public class ChannelInfoAdapter extends RecyclerView.Adapter {
                     android.R.attr.textColorSecondary, Color.BLACK);
 
             topicTextView.setMovementMethod(LinkMovementMethod.getInstance());
+            numberOfMembers = view.findViewById(R.id.number_of_members);
+
         }
 
         public void bind(String topic, String topicSetBy, Date topicSetOn) {
@@ -165,6 +170,12 @@ public class ChannelInfoAdapter extends RecyclerView.Adapter {
             } else {
                 topicInfoTextView.setText(null);
                 topicInfoTextView.setVisibility(View.GONE);
+            }
+
+            //roboirc
+            if(mMembers!=null)
+            {
+                numberOfMembers.setText("Channel count: " + String.valueOf(mMembers.size()));
             }
         }
 
